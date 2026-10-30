@@ -9,7 +9,7 @@ import (
 
 func main() {
 
-	cmd := exec.Command("cat", "/etc/os-release")
+	cmd := exec.Command("hostname")
 	stdoutStderr, err := cmd.CombinedOutput()
 	if err != nil {
 		log.Fatal(err)
