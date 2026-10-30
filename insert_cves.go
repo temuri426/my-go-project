@@ -30,9 +30,9 @@ func main() {
 
 	commandTag, err := conn.Exec(context.Background(), "INSERT INTO cves (id, cve) VALUES ($1, $2)", cve.ID, cve.CVE)
 	if err != nil {
-		return err
+		return
 	}
 	fmt.Println("data is inserted successfuly")
-	fmt.Println("rows affected:", commandTag.rows)
+	fmt.Println("rows affected:", commandTag.RowsAffected())
 
 }
