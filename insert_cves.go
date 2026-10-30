@@ -16,7 +16,7 @@ type CVE struct {
 func main() {
 
 	// Connection to database
-	db_url := "postgres://postgres:YOUR_PASSWORD@test-db:5432/cve"
+	db_url := "postgres://postgres:1234qwer@test-db:5432/cve"
 
 	conn, err := pgx.Connect(context.Background(), db_url)
 	if err != nil {
