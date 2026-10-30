@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	con, err := pgx.Connect(context.Background(), "postgres://postgres:1234qwer@192.168.7.129:5432/cve")
+	con, err := pgx.Connect(context.Background(), "postgres://postgres:1234qwer@localhost:5432/cve")
 	if err != nil {
 		fmt.Println("erroris : ", err)
 		return
