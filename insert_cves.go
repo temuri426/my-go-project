@@ -54,6 +54,12 @@ func main() {
 
 		w.WriteHeader(http.StatusCreated)
 		fmt.Fprintln(w, "CVE inserted successfully")
+
+		//return ID if the new entry
+
+		var id int
+		conn.QueryRow(r.Context(), "SELECT id FROM cves WHERE cve = $1", cve.CVE).Scan(&id)
+		fmt.Fprintln(w, "CVE ID:", id)
 	}
 
 	// Register handler
