@@ -56,10 +56,11 @@ func main() {
 		fmt.Fprintln(w, "CVE inserted successfully")
 
 		//return ID if the new entry
-
 		var id int
-		conn.QueryRow(r.Context(), "SELECT id FROM cves WHERE cve = $1", cve.CVE).Scan(&id)
+		var cveValue string
+		conn.QueryRow(r.Context(), "SELECT * FROM cves WHERE cve = $1", cve.CVE).Scan(&id, &cveValue)
 		fmt.Fprintln(w, "CVE ID:", id)
+		fmt.Fprint(w, "CVE name:", cveValue)
 	}
 
 	// Register handler
