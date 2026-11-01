@@ -30,9 +30,10 @@ func main() {
 	}
 	defer conn.Close(context.Background())
 
-	// Define POST handler, check id requets is POST
+	// handler for inserting,listing and deleting values in DB
 	h1 := func(w http.ResponseWriter, r *http.Request) {
 
+		// POST handler for inserting values in DB
 		if r.Method == "POST" {
 			// Decode received JSON body. POST request will be in JSON
 			var cve CVE
@@ -68,9 +69,10 @@ func main() {
 
 		}
 
+		//if message is GET , list all entries
 		if r.Method == "GET" {
 			rows, err := conn.Query(context.Background(), "SELECT * FROM cves")
-			// Create a slice to store all CVE records
+
 			var cves []CVE
 
 			for rows.Next() {
@@ -80,7 +82,7 @@ func main() {
 				cves = append(cves, cve)
 			}
 
-			// Convert slice into JSON
+			// Convert  into JSON
 			jsonData, err := json.MarshalIndent(cves, "", "  ")
 			if err != nil {
 				log.Fatal("JSON error:", err)
@@ -90,7 +92,7 @@ func main() {
 			w.Write(jsonData)
 		}
 
-		//delete entry
+		//delete entry from DB
 		if r.Method == "DELETE" {
 
 			id, err := strconv.Atoi(r.PathValue("id"))
