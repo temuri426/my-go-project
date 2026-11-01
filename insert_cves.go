@@ -83,7 +83,8 @@ func main() {
 				log.Fatal("JSON error:", err)
 			}
 
-			fmt.Println(string(jsonData))
+			w.Header().Set("Content-Type", "application/json")
+			w.Write(jsonData)
 		}
 
 	}
