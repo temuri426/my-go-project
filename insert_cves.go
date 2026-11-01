@@ -87,12 +87,23 @@ func main() {
 			w.Write(jsonData)
 		}
 
-	}
+		//show hostname only
+			cmd := exec.Command("hostname")
+			stdoutStderr, err := cmd.CombinedOutput()
+		if err != nil {
+		log.Fatal(err)
+		}
+
+		h2 := func(w http.ResponseWriter, r *http.Request) {
+			io.WriteString(w, string(stdoutStderr))
+		}
 
 	// Register handler
-	http.HandleFunc("/cve", h1)
+	http.HandleFunc("/cve", h1)    //for inserting and listing all entries
+	http.HandleFunc("/", h2)       //for getting hostname
+	http.HandleFunc("/cve/id", h3) //for deleting an entrie
 
 	// Start HTTP server
 	http.ListenAndServe(":8090", nil)
 
-}
+	}
