@@ -11,6 +11,7 @@ import (
 )
 
 type CVE struct {
+	ID  int    `json:"id"`
 	CVE string `json:"cve"`
 }
 
