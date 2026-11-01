@@ -28,42 +28,40 @@ func main() {
 	// Define POST handler, check id requets is POST
 	h1 := func(w http.ResponseWriter, r *http.Request) {
 
-		if r.Method != "POST" {
-			http.Error(w, "Only POST is allowed", http.StatusMethodNotAllowed)
-			return
+		if r.Method == "POST" {
+			// Decode received JSON body. POST request will be in JSON
+			var cve CVE
+
+			err := json.NewDecoder(r.Body).Decode(&cve)
+			if err != nil {
+				http.Error(w, "Invalid JSON", http.StatusBadRequest)
+				return
+			}
+
+			// Insert values into DB
+			commandTag, err := conn.Exec(r.Context(), "INSERT INTO cves (cve) VALUES ($1)", cve.CVE)
+
+			if err != nil {
+				http.Error(w, "Database insert error", http.StatusInternalServerError)
+				return
+			}
+
+			fmt.Println("Rows affected:", commandTag.RowsAffected())
+
+			w.WriteHeader(http.StatusCreated)
+			fmt.Fprintln(w, "CVE inserted successfully")
+
+			//return ID if the new entry
+			var id int
+			var cveValue string
+			conn.QueryRow(r.Context(), "SELECT * FROM cves WHERE cve = $1", cve.CVE).Scan(&id, &cveValue)
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(map[string]any{
+				"id":  id,
+				"cve": cveValue,
+			})
+
 		}
-
-		// Decode received JSON body. POST request will be in JSON
-		var cve CVE
-
-		err := json.NewDecoder(r.Body).Decode(&cve)
-		if err != nil {
-			http.Error(w, "Invalid JSON", http.StatusBadRequest)
-			return
-		}
-
-		// Insert values into DB
-		commandTag, err := conn.Exec(r.Context(), "INSERT INTO cves (cve) VALUES ($1)", cve.CVE)
-
-		if err != nil {
-			http.Error(w, "Database insert error", http.StatusInternalServerError)
-			return
-		}
-
-		fmt.Println("Rows affected:", commandTag.RowsAffected())
-
-		w.WriteHeader(http.StatusCreated)
-		fmt.Fprintln(w, "CVE inserted successfully")
-
-		//return ID if the new entry
-		var id int
-		var cveValue string
-		conn.QueryRow(r.Context(), "SELECT * FROM cves WHERE cve = $1", cve.CVE).Scan(&id, &cveValue)
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(map[string]any{
-			"id":  id,
-			"cve": cveValue,
-		})
 
 	}
 
