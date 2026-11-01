@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/jackc/pgx/v5"
@@ -61,6 +62,27 @@ func main() {
 				"cve": cveValue,
 			})
 
+		}
+
+		if r.Method == "GET" {
+			rows, err := con.Query(context.Background(), "SELECT * FROM cves")
+			// Create a slice to store all CVE records
+			var cves []CVE
+
+			for rows.Next() {
+				var cve CVE
+
+				rows.Scan(&cve.ID, &cve.CVE)
+				cves = append(cves, cve)
+			}
+
+			// Convert slice into JSON
+			jsonData, err := json.MarshalIndent(cves, "", "  ")
+			if err != nil {
+				log.Fatal("JSON error:", err)
+			}
+
+			fmt.Println(string(jsonData))
 		}
 
 	}
