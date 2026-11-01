@@ -58,10 +58,7 @@ func main() {
 		//return ID if the new entry
 		var id int
 		var cveValue string
-		//conn.QueryRow(r.Context(), "SELECT * FROM cves WHERE cve = $1", cve.CVE).Scan(&id, &cveValue)
-		//fmt.Fprintln(w, "CVE ID:", id)
-		//fmt.Fprint(w, "CVE name:", cveValue)
-
+		conn.QueryRow(r.Context(), "SELECT * FROM cves WHERE cve = $1", cve.CVE).Scan(&id, &cveValue)
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]any{
 			"id":  id,
