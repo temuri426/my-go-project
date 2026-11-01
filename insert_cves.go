@@ -25,7 +25,7 @@ func main() {
 	}
 	defer conn.Close(context.Background())
 
-	// Define POST handler: accept only POST requests
+	// Define POST handler, check id requets is POST
 	h1 := func(w http.ResponseWriter, r *http.Request) {
 
 		if r.Method != "POST" {
@@ -33,7 +33,7 @@ func main() {
 			return
 		}
 
-		// Decode JSON body
+		// Decode received JSON body. POST request will be in JSON
 		var cve CVE
 
 		err := json.NewDecoder(r.Body).Decode(&cve)
@@ -61,6 +61,13 @@ func main() {
 		conn.QueryRow(r.Context(), "SELECT * FROM cves WHERE cve = $1", cve.CVE).Scan(&id, &cveValue)
 		fmt.Fprintln(w, "CVE ID:", id)
 		fmt.Fprint(w, "CVE name:", cveValue)
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]any{
+			"id":  id,
+			"cve": cveValue,
+		})
+
 	}
 
 	// Register handler
