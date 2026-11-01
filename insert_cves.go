@@ -66,7 +66,7 @@ func main() {
 		}
 
 		if r.Method == "GET" {
-			rows, err := con.Query(context.Background(), "SELECT * FROM cves")
+			rows, err := conn.Query(context.Background(), "SELECT * FROM cves")
 			// Create a slice to store all CVE records
 			var cves []CVE
 
