@@ -4,8 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
+	"os/exec"
 
 	"github.com/jackc/pgx/v5"
 )
@@ -86,17 +88,17 @@ func main() {
 			w.Header().Set("Content-Type", "application/json")
 			w.Write(jsonData)
 		}
-
-		//show hostname only
-			cmd := exec.Command("hostname")
-			stdoutStderr, err := cmd.CombinedOutput()
-		if err != nil {
+	}
+	//show hostname only
+	cmd := exec.Command("hostname")
+	stdoutStderr, err := cmd.CombinedOutput()
+	if err != nil {
 		log.Fatal(err)
-		}
+	}
 
-		h2 := func(w http.ResponseWriter, r *http.Request) {
-			io.WriteString(w, string(stdoutStderr))
-		}
+	h2 := func(w http.ResponseWriter, r *http.Request) {
+		io.WriteString(w, string(stdoutStderr))
+	}
 
 	// Register handler
 	http.HandleFunc("/cve", h1)    //for inserting and listing all entries
@@ -106,4 +108,4 @@ func main() {
 	// Start HTTP server
 	http.ListenAndServe(":8090", nil)
 
-	}
+}
