@@ -101,9 +101,9 @@ func main() {
 	}
 
 	// Register handler
-	http.HandleFunc("/cve", h1)    //for inserting and listing all entries
-	http.HandleFunc("/", h2)       //for getting hostname
-	http.HandleFunc("/cve/id", h3) //for deleting an entrie
+	http.HandleFunc("/cve", h1) //for inserting and listing all entries
+	http.HandleFunc("/", h2)    //for getting hostname
+	//http.HandleFunc("/cve/id", h3) //for deleting an entrie
 
 	// Start HTTP server
 	http.ListenAndServe(":8090", nil)
