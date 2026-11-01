@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"os/exec"
+	"strconv"
 
 	"github.com/jackc/pgx/v5"
 )
@@ -88,6 +89,19 @@ func main() {
 			w.Header().Set("Content-Type", "application/json")
 			w.Write(jsonData)
 		}
+
+		//delete entry
+		if r.Method == "DELETE" {
+
+			id, err := strconv.Atoi(r.PathValue("id"))
+			if err != nil {
+				http.Error(w, "Invalid ID", http.StatusBadRequest)
+				return
+			}
+			commandTag, err := conn.Exec(r.Context(), "DELETE FROM cves WHERE id = $1", id)
+			fmt.Println("rows affected:", commandTag.RowsAffected())
+		}
+
 	}
 	//show hostname only
 	cmd := exec.Command("hostname")
@@ -101,9 +115,9 @@ func main() {
 	}
 
 	// Register handler
-	http.HandleFunc("/cve", h1) //for inserting and listing all entries
-	http.HandleFunc("/", h2)    //for getting hostname
-	//http.HandleFunc("/cve/id", h3) //for deleting an entrie
+	http.HandleFunc("/cve", h1)      //for inserting and listing all entries
+	http.HandleFunc("/", h2)         //for getting hostname
+	http.HandleFunc("/cve/{id}", h1) //for deleting an entry
 
 	// Start HTTP server
 	http.ListenAndServe(":8090", nil)
